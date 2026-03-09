@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>年度计划清单 - 潜水员戴夫风格</title>
+    <!-- PWA相关元标签 -->
+    <meta name="description" content="个人年度计划清单应用，采用潜水员戴夫风格的马赛克卡通UI设计">
+    <meta name="theme-color" content="#1a5f7a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="计划清单">
+    <!-- PWA图标 -->
+    <link rel="icon" href="icon-192x192.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="icon-192x192.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="icon-512x512.png" sizes="512x512">
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dave-blue: #1a5f7a;
+            --dave-light-blue: #57c5b6;
+            --dave-teal: #159895;
+            --dave-coral: #ff6b6b;
+            --dave-yellow: #ffc93c;
+            --dave-orange: #f4a261;
+            --dave-pink: #ff8fab;
+            --dave-green: #2a9d8f;
+            --dave-purple: #9b5de5;
+            --dave-cream: #fefae0;
+            --dave-dark: #264653;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(26, 95, 122, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(87, 197, 182, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 107, 0.1) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(45deg, var(--dave-yellow), var(--dave-coral), var(--dave-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.3));
+            letter-spacing: 3px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: var(--dave-light-blue);
+            font-size: 1.1rem;
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+
+        .points-display {
+            background: linear-gradient(135deg, var(--dave-yellow), var(--dave-orange));
+            padding: 15px 40px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 
+                0 6px 0 #c9780f,
+                0 10px 20px rgba(0,0,0,0.3);
+            border: 4px solid #fff;
+        }
+
+        .points-display span {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--dave-dark);
+        }
+
+        .section {
+            background: linear-gradient(180deg, rgba(26, 95, 122, 0.9) 0%, rgba(21, 152, 149, 0.85) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 4px solid rgba(255,255,255,0.2);
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.3),
+                inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--dave-cream);
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(254, 250, 224, 0.95) 100%);
+            border-radius: 16px;
+            padding: 20px;
+            border: 3px solid;
+            box-shadow: 
+                0 6px 0 rgba(0,0,0,0.2),
+                0 8px 20px rgba(0,0,0,0.15);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 10px 0 rgba(0,0,0,0.2),
+                0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .card.sports { border-color: var(--dave-coral); }
+        .card.sports::before { background: linear-gradient(90deg, var(--dave-coral), #ff8e8e); }
+
+        .card.skincare { border-color: var(--dave-pink); }
+        .card.skincare::before { background: linear-gradient(90deg, var(--dave-pink), #ffb3c6); }
+
+        .card.study { border-color: var(--dave-purple); }
+        .card.study::before { background: linear-gradient(90deg, var(--dave-purple), #c490ff); }
+
+        .card.food { border-color: var(--dave-green); }
+        .card.food::before { background: linear-gradient(90deg, var(--dave-green), #4fd1c5); }
+
+        .card.food-reward { border-color: var(--dave-orange); }
+        .card.food-reward::before { background: linear-gradient(90deg, var(--dave-orange), #ffd166); }
+
+        .card.travel { border-color: var(--dave-light-blue); }
+        .card.travel::before { background: linear-gradient(90deg, var(--dave-light-blue), #7dd3e8); }
+
+        .card.shopping { border-color: var(--dave-yellow); }
+        .card.shopping::before { background: linear-gradient(90deg, var(--dave-yellow), #ffe066); }
+
+        .card.life-list { border-color: var(--dave-purple); }
+        .card.life-list::before { background: linear-gradient(90deg, var(--dave-purple), #c490ff); }
+
+        .life-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.8);
+            border-radius: 12px;
+            border: 2px dashed rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+
+        .life-list-item:hover {
+            background: rgba(255,255,255,0.95);
+            border-color: rgba(0,0,0,0.3);
+        }
+
+        .life-list-item.completed {
+            background: rgba(42, 157, 143, 0.2);
+        }
+
+        .life-list-item.completed .life-item-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .life-item-text {
+            flex: 1;
+            font-size: 1rem;
+            color: var(--dave-dark);
+            font-weight: 500;
+        }
+
+        .life-item-text input {
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            color: var(--dave-dark);
+            width: 100%;
+            padding: 2px 5px;
+            font-weight: 500;
+        }
+
+        .life-item-text input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.5);
+            border-radius: 4px;
+        }
+
+        .life-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .life-item-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .life-item-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+        }
+
+        .task-group {
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            padding: 12px;
+            border: 2px dashed rgba(0,0,0,0.1);
+        }
+
+        .task-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+
+        .task-group-title {
+            font-weight: 600;
+            color: var(--dave-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .task-group-title input {
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: var(--dave-dark);
+            font-size: 1rem;
+            width: 120px;
+        }
+
+        .task-group-title input:focus {
+            outline: none;
+            border-bottom: 2px solid var(--dave-teal);
+        }
+
+        .task-group-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .group-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .edit-btn {
+            background: var(--dave-light-blue);
+            color: white;
+        }
+
+        .delete-btn {
+            background: var(--dave-coral);
+            color: white;
+        }
+
+        .add-week-btn {
+            background: var(--dave-purple);
+            color: white;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 8px;
+            margin: 6px 0;
+            background: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .task-item:hover {
+            background: rgba(255,255,255,0.95);
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        .task-item.completed {
+            background: rgba(42, 157, 143, 0.2);
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--dave-dark);
+            border-radius: 6px;
+            margin-right: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        .checkbox:hover {
+            border-color: var(--dave-teal);
+            background: var(--dave-light-blue);
+        }
+
+        .checkbox.checked {
+            background: var(--dave-green);
+            border-color: var(--dave-green);
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 0.95rem;
+            color: var(--dave-dark);
+        }
+
+        .task-text input {
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            color: var(--dave-dark);
+            width: 100%;
+            padding: 2px 5px;
+        }
+
+        .task-text input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.5);
+            border-radius: 4px;
+        }
+
+        .task-text.completed input {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .task-points {
+            font-size: 0.8rem;
+            color: var(--dave-orange);
+            font-weight: 600;
+            margin: 0 10px;
+            white-space: nowrap;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .task-item:hover .task-actions {
+            opacity: 1;
+        }
+
+        .task-action-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .week-badge {
+            font-size: 0.7rem;
+            background: var(--dave-purple);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 8px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        .add-task-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: linear-gradient(135deg, var(--dave-teal), var(--dave-green));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            box-shadow: 0 4px 0 #1a6b62;
+        }
+
+        .add-task-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #1a6b62;
+        }
+
+        .add-task-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1a6b62;
+        }
+
+        .add-group-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--dave-orange), var(--dave-yellow));
+            color: var(--dave-dark);
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            box-shadow: 0 3px 0 #c9780f;
+        }
+
+        .add-group-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #c9780f;
+        }
+
+        .reward-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.8);
+            border-radius: 12px;
+            border: 2px dashed rgba(0,0,0,0.2);
+        }
+
+        .reward-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reward-icon {
+            font-size: 1.8rem;
+        }
+
+        .reward-name {
+            font-weight: 600;
+            color: var(--dave-dark);
+        }
+
+        .reward-points {
+            font-size: 0.9rem;
+            color: var(--dave-orange);
+            font-weight: 700;
+        }
+
+        .redeem-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--dave-coral), var(--dave-orange));
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 3px 0 #c94a3d;
+        }
+
+        .redeem-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #c94a3d;
+        }
+
+        .redeem-btn:disabled {
+            background: #ccc;
+            box-shadow: 0 3px 0 #999;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal h3 {
+            color: var(--dave-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dave-dark);
+            font-size: 0.9rem;
+        }
+
+        .modal input, .modal select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .modal input:focus, .modal select:focus {
+            outline: none;
+            border-color: var(--dave-teal);
+        }
+
+        .modal-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-row > div {
+            flex: 1;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-buttons .cancel-btn {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .modal-buttons .confirm-btn {
+            background: var(--dave-teal);
+            color: white;
+        }
+
+        .floating-point {
+            position: fixed;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dave-yellow);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            z-index: 200;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.5);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .section { padding: 20px 15px; }
+            .grid-container { grid-template-columns: 1fr; }
+            .card-title { font-size: 1.2rem; }
+            .modal-row { flex-direction: column; gap: 0; }
+        }
+
+        .fish-swim {
+            position: fixed;
+            font-size: 2rem;
+            animation: swim 15s linear infinite;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        @keyframes swim {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotate(0deg); }
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            color: var(--dave-teal);
+        }
+
+        .empty-hint {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 年度计划清单</h1>
+            <p class="subtitle">努力达成 · 收获奖励</p>
+            <div class="points-display">
+                当前积分: <span id="totalPoints">0</span> ⭐
+            </div>
+        </header>
+
+        <section class="section" id="effortSection">
+            <h2 class="section-title">💪 努力区域</h2>
+            <div class="grid-container">
+                <div class="card sports">
+                    <h3 class="card-title"><span class="card-icon">🚴</span> 运动</h3>
+                    <div class="task-groups" id="sportsGroups">
+                    </div>
+                    <button class="add-group-btn" onclick="openAddGroupModal('sports')">+ 添加子项目</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sportsProgress" style="width: 0%; background: linear-gradient(90deg, var(--dave-coral), #ff8e8e);"></div>
+                    </div>
+                    <p class="progress-text">完成度: <span class="progress-percentage" id="sportsPercent">0</span>%</p>
+                </div>
+
+                <div class="card skincare">
+                    <h3 class="card-title"><span class="card-icon">✨</span> 护肤</h3>
+                    <div class="task-groups" id="skincareGroups">
+                    </div>
+                    <button class="add-group-btn" onclick="openAddGroupModal('skincare')">+ 添加子项目</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="skincareProgress" style="width: 0%; background: linear-gradient(90deg, var(--dave-pink), #ffb3c6);"></div>
+                    </div>
+                    <p class="progress-text">完成度: <span class="progress-percentage" id="skincarePercent">0</span>%</p>
+                </div>
+
+                <div class="card study">
+                    <h3 class="card-title"><span class="card-icon">📚</span> 学习</h3>
+                    <div class="task-groups" id="studyGroups">
+                    </div>
+                    <button class="add-group-btn" onclick="openAddGroupModal('study')">+ 添加子项目</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="studyProgress" style="width: 0%; background: linear-gradient(90deg, var(--dave-purple), #c490ff);"></div>
+                    </div>
+                    <p class="progress-text">完成度: <span class="progress-percentage" id="studyPercent">0</span>%</p>
+                </div>
+
+                <div class="card food">
+                    <h3 class="card-title"><span class="card-icon">🥗</span> 饮食</h3>
+                    <div class="task-groups" id="foodGroups">
+                    </div>
+                    <button class="add-group-btn" onclick="openAddGroupModal('food')">+ 添加子项目</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="foodProgress" style="width: 0%; background: linear-gradient(90deg, var(--dave-green), #4fd1c5);"></div>
+                    </div>
+                    <p class="progress-text">完成度: <span class="progress-percentage" id="foodPercent">0</span>%</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="lifeListSection">
+            <h2 class="section-title">🌟 人生清单</h2>
+            <div class="grid-container">
+                <div class="card life-list">
+                    <h3 class="card-title"><span class="card-icon">🌅</span> 人生目标</h3>
+                    <div class="life-list-items" id="lifeListItems">
+                    </div>
+                    <button class="add-task-btn" onclick="openAddLifeItemModal()">+ 添加人生目标</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="rewardSection">
+            <h2 class="section-title">🎁 奖励区域</h2>
+            <div class="grid-container">
+                <div class="card food-reward">
+                    <h3 class="card-title"><span class="card-icon">🍜</span> 美食</h3>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🍕</span>
+                            <div>
+                                <div class="reward-name">披萨大餐</div>
+                                <div class="reward-points">需要 100 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('披萨大餐', 100)">兑换</button>
+                    </div>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🍰</span>
+                            <div>
+                                <div class="reward-name">甜品蛋糕</div>
+                                <div class="reward-points">需要 80 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('甜品蛋糕', 80)">兑换</button>
+                    </div>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🍜</span>
+                            <div>
+                                <div class="reward-name">火锅一顿</div>
+                                <div class="reward-points">需要 150 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('火锅一顿', 150)">兑换</button>
+                    </div>
+                    <button class="add-task-btn" onclick="openAddRewardModal('food')">+ 添加美食奖励</button>
+                </div>
+
+                <div class="card travel">
+                    <h3 class="card-title"><span class="card-icon">✈️</span> 旅游</h3>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🏖️</span>
+                            <div>
+                                <div class="reward-name">周边小游</div>
+                                <div class="reward-points">需要 200 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('周边小游', 200)">兑换</button>
+                    </div>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🏔️</span>
+                            <div>
+                                <div class="reward-name">周末露营</div>
+                                <div class="reward-points">需要 180 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('周末露营', 180)">兑换</button>
+                    </div>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🌴</span>
+                            <div>
+                                <div class="reward-name">海边度假</div>
+                                <div class="reward-points">需要 500 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('海边度假', 500)">兑换</button>
+                    </div>
+                    <button class="add-task-btn" onclick="openAddRewardModal('travel')">+ 添加旅游奖励</button>
+                </div>
+
+                <div class="card shopping">
+                    <h3 class="card-title"><span class="card-icon">🛍️</span> 购物</h3>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🎮</span>
+                            <div>
+                                <div class="reward-name">游戏皮肤</div>
+                                <div class="reward-points">需要 120 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('游戏皮肤', 120)">兑换</button>
+                    </div>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">👗</span>
+                            <div>
+                                <div class="reward-name">漂亮衣服</div>
+                                <div class="reward-points">需要 300 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('漂亮衣服', 300)">兑换</button>
+                    </div>
+                    <div class="reward-item">
+                        <div class="reward-info">
+                            <span class="reward-icon">🎧</span>
+                            <div>
+                                <div class="reward-name">想要的东西</div>
+                                <div class="reward-points">需要 250 积分</div>
+                            </div>
+                        </div>
+                        <button class="redeem-btn" onclick="redeemReward('想要的东西', 250)">兑换</button>
+                    </div>
+                    <button class="add-task-btn" onclick="openAddRewardModal('shopping')">+ 添加购物奖励</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal" id="addGroupModal">
+        <div class="modal-content">
+            <h3>添加子项目</h3>
+            <label>子项目名称</label>
+            <input type="text" id="newGroupName" placeholder="例如：年度目标、每周计划...">
+            <div class="modal-row">
+                <div>
+                    <label>周数（可选）</label>
+                    <select id="newGroupWeek">
+                        <option value="">无周计划</option>
+                        <option value="1">第1周</option>
+                        <option value="2">第2周</option>
+                        <option value="3">第3周</option>
+                        <option value="4">第4周</option>
+                        <option value="5">第5周</option>
+                        <option value="6">第6周</option>
+                        <option value="7">第7周</option>
+                        <option value="8">第8周</option>
+                        <option value="9">第9周</option>
+                        <option value="10">第10周</option>
+                        <option value="11">第11周</option>
+                        <option value="12">第12周</option>
+                    </select>
+                </div>
+                <div>
+                    <label>积分</label>
+                    <input type="number" id="newGroupPoints" placeholder="默认10" min="1" value="10">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeAddGroupModal()">取消</button>
+                <button class="confirm-btn" onclick="confirmAddGroup()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addTaskModal">
+        <div class="modal-content">
+            <h3>添加任务</h3>
+            <label>任务名称</label>
+            <input type="text" id="newTaskText" placeholder="输入任务名称...">
+            <label>完成积分</label>
+            <input type="number" id="newTaskPoints" placeholder="输入可获得积分" min="1">
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeAddTaskModal()">取消</button>
+                <button class="confirm-btn" onclick="confirmAddTask()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addRewardModal">
+        <div class="modal-content">
+            <h3>添加新奖励</h3>
+            <input type="text" id="newRewardName" placeholder="输入奖励名称...">
+            <input type="number" id="newRewardPoints" placeholder="输入所需积分" min="1">
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeAddRewardModal()">取消</button>
+                <button class="confirm-btn" onclick="confirmAddReward()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addLifeItemModal">
+        <div class="modal-content">
+            <h3>添加人生目标</h3>
+            <input type="text" id="newLifeItemText" placeholder="输入人生目标...">
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeAddLifeItemModal()">取消</button>
+                <button class="confirm-btn" onclick="confirmAddLifeItem()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fish-swim" style="top: 20%;">🐠</div>
+    <div class="fish-swim" style="top: 50%; animation-delay: -5s;">🐟</div>
+    <div class="fish-swim" style="top: 75%; animation-delay: -10s;">🐡</div>
+
+    <script>
+        let totalPoints = 0;
+        let currentCategory = '';
+        let currentGroupId = null;
+        let currentRewardCategory = '';
+        let groupIdCounter = 0;
+        let lifeItemIdCounter = 0;
+
+        const defaultGroups = {
+            sports: [
+                { id: 1, name: '骑车目标', week: '', tasks: [
+                    { text: '骑车1000公里', completed: false, points: 50 },
+                    { text: '每周骑行3次', completed: false, points: 30 }
+                ]},
+                { id: 2, name: '减肥计划', week: '', tasks: [
+                    { text: '减肥20斤', completed: false, points: 80 },
+                    { text: '每周跑步3次', completed: false, points: 30 }
+                ]},
+                { id: 3, name: '技能学习', week: '', tasks: [
+                    { text: '学会游泳', completed: false, points: 40 }
+                ]}
+            ],
+            skincare: [
+                { id: 4, name: '日常护肤', week: '', tasks: [
+                    { text: '每天护肤', completed: false, points: 20 },
+                    { text: '每周敷面膜3次', completed: false, points: 30 }
+                ]},
+                { id: 5, name: '生活习惯', week: '', tasks: [
+                    { text: '早睡早起(11点前)', completed: false, points: 25 },
+                    { text: '戒糖一个月', completed: false, points: 35 }
+                ]}
+            ],
+            study: [
+                { id: 6, name: '阅读计划', week: '', tasks: [
+                    { text: '阅读24本书', completed: false, points: 60 }
+                ]},
+                { id: 7, name: '技能提升', week: '', tasks: [
+                    { text: '学习新技能', completed: false, points: 40 },
+                    { text: '英语单词打卡100天', completed: false, points: 30 }
+                ]},
+                { id: 8, name: '课程学习', week: '', tasks: [
+                    { text: '完成在线课程', completed: false, points: 50 }
+                ]}
+            ],
+            food: [
+                { id: 9, name: '饮食习惯', week: '', tasks: [
+                    { text: '每天吃早餐', completed: false, points: 25 },
+                    { text: '每天喝水2L', completed: false, points: 20 }
+                ]},
+                { id: 10, name: '自己做饭', week: '', tasks: [
+                    { text: '戒掉外卖(每周)', completed: false, points: 30 },
+                    { text: '自己做饭30次', completed: false, points: 35 }
+                ]}
+            ]
+        };
+
+        const defaultLifeItems = [
+            { id: 1, text: '环游世界', completed: false },
+            { id: 2, text: '学习一门新语言', completed: false },
+            { id: 3, text: '写一本书', completed: false },
+            { id: 4, text: '学会一种乐器', completed: false },
+            { id: 5, text: '跳伞', completed: false }
+        ];
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('annualPlanData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                totalPoints = data.totalPoints || 0;
+                groupIdCounter = data.groupIdCounter || 0;
+                lifeItemIdCounter = data.lifeItemIdCounter || 0;
+                document.getElementById('totalPoints').textContent = totalPoints;
+                
+                if (data.groups) {
+                    Object.keys(data.groups).forEach(category => {
+                        renderGroups(category, data.groups[category]);
+                    });
+                } else {
+                    Object.keys(defaultGroups).forEach(category => {
+                        renderGroups(category, defaultGroups[category]);
+                    });
+                }
+                
+                if (data.lifeItems) {
+                    renderLifeItems(data.lifeItems);
+                } else {
+                    renderLifeItems(defaultLifeItems);
+                }
+                
+                updateAllProgress();
+                updateRedeemButtons();
+            } else {
+                Object.keys(defaultGroups).forEach(category => {
+                    renderGroups(category, defaultGroups[category]);
+                });
+                renderLifeItems(defaultLifeItems);
+            }
+        }
+
+        function saveToStorage() {
+            const categories = ['sports', 'skincare', 'study', 'food'];
+            const groups = {};
+            
+            categories.forEach(cat => {
+                const container = document.getElementById(cat + 'Groups');
+                if (container) {
+                    const groupElements = container.querySelectorAll('.task-group');
+                    groups[cat] = Array.from(groupElements).map(gEl => {
+                        const groupId = parseInt(gEl.dataset.groupId);
+                        const groupName = gEl.querySelector('.task-group-title input').value;
+                        const week = gEl.dataset.week || '';
+                        const tasks = Array.from(gEl.querySelectorAll('.task-item')).map(tEl => ({
+                            text: tEl.querySelector('.task-text input').value,
+                            completed: tEl.classList.contains('completed'),
+                            points: parseInt(tEl.dataset.points)
+                        }));
+                        return { id: groupId, name: groupName, week: week, tasks: tasks };
+                    });
+                }
+            });
+            
+            const lifeItems = Array.from(document.querySelectorAll('.life-list-item')).map(item => ({
+                id: parseInt(item.dataset.itemId),
+                text: item.querySelector('.life-item-text input').value,
+                completed: item.classList.contains('completed')
+            }));
+            
+            const data = { totalPoints, groups, groupIdCounter, lifeItems, lifeItemIdCounter };
+            localStorage.setItem('annualPlanData', JSON.stringify(data));
+        }
+
+        function renderGroups(category, groups) {
+            const container = document.getElementById(category + 'Groups');
+            container.innerHTML = '';
+            
+            groups.forEach(group => {
+                if (group.id > groupIdCounter) {
+                    groupIdCounter = group.id;
+                }
+                const groupEl = createGroupElement(group);
+                container.appendChild(groupEl);
+            });
+        }
+
+        function createGroupElement(group) {
+            const div = document.createElement('div');
+            div.className = 'task-group';
+            div.dataset.groupId = group.id;
+            div.dataset.week = group.week || '';
+            
+            const weekBadge = group.week ? `<span class="week-badge">第${group.week}周</span>` : '';
+            
+            div.innerHTML = `
+                <div class="task-group-header">
+                    <div class="task-group-title">
+                        ${weekBadge}
+                        <input type="text" value="${group.name}" onchange="saveToStorage()">
+                    </div>
+                    <div class="task-group-actions">
+                        <button class="group-action-btn add-week-btn" onclick="openAddWeekModal(${group.id}, '${group.week}')" title="设置周计划">📅</button>
+                        <button class="group-action-btn" onclick="openAddTaskModal(${group.id})" title="添加任务">+</button>
+                        <button class="group-action-btn delete-btn" onclick="deleteGroup(${group.id})" title="删除子项目">×</button>
+                    </div>
+                </div>
+                <ul class="task-list">
+                </ul>
+            `;
+            
+            const taskList = div.querySelector('.task-list');
+            group.tasks.forEach(task => {
+                const taskEl = createTaskElement(task, group.id);
+                taskList.appendChild(taskEl);
+            });
+            
+            return div;
+        }
+
+        function createTaskElement(task, groupId) {
+            const li = document.createElement('li');
+            li.className = 'task-item' + (task.completed ? ' completed' : '');
+            li.dataset.points = task.points;
+            li.dataset.groupId = groupId;
+            
+            li.innerHTML = `
+                <div class="checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(this)"></div>
+                <div class="task-text ${task.completed ? 'completed' : ''}">
+                    <input type="text" value="${task.text}" onchange="saveToStorage()">
+                </div>
+                <span class="task-points">+${task.points}</span>
+                <div class="task-actions">
+                    <button class="task-action-btn edit-btn" onclick="editTaskPoints(this)" title="修改积分">✏️</button>
+                    <button class="task-action-btn delete-btn" onclick="deleteTask(this)" title="删除">×</button>
+                </div>
+            `;
+            
+            return li;
+        }
+
+        function toggleTask(checkbox) {
+            const taskItem = checkbox.parentElement;
+            const taskText = taskItem.querySelector('.task-text');
+            checkbox.classList.toggle('checked');
+            taskItem.classList.toggle('completed');
+            taskText.classList.toggle('completed');
+            
+            if (taskItem.classList.contains('completed')) {
+                const points = parseInt(taskItem.dataset.points);
+                totalPoints += points;
+                showFloatingPoints(taskItem, points);
+            } else {
+                const points = parseInt(taskItem.dataset.points);
+                totalPoints -= points;
+            }
+            
+            document.getElementById('totalPoints').textContent = totalPoints;
+            updateAllProgress();
+            saveToStorage();
+            updateRedeemButtons();
+        }
+
+        function showFloatingPoints(element, points) {
+            const rect = element.getBoundingClientRect();
+            const floater = document.createElement('div');
+            floater.className = 'floating-point';
+            floater.textContent = '+' + points;
+            floater.style.left = rect.left + rect.width / 2 + 'px';
+            floater.style.top = rect.top + 'px';
+            document.body.appendChild(floater);
+            
+            setTimeout(() => floater.remove(), 1000);
+        }
+
+        function updateProgress(category) {
+            const container = document.getElementById(category + 'Groups');
+            if (!container) return;
+            
+            const groups = container.querySelectorAll('.task-group');
+            let total = 0;
+            let completed = 0;
+            
+            groups.forEach(group => {
+                const tasks = group.querySelectorAll('.task-item');
+                tasks.forEach(task => {
+                    total++;
+                    if (task.classList.contains('completed')) {
+                        completed++;
+                    }
+                });
+            });
+            
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            const progressBar = document.getElementById(category + 'Progress');
+            const percentText = document.getElementById(category + 'Percent');
+            
+            if (progressBar) progressBar.style.width = percent + '%';
+            if (percentText) percentText.textContent = percent;
+        }
+
+        function updateAllProgress() {
+            updateProgress('sports');
+            updateProgress('skincare');
+            updateProgress('study');
+            updateProgress('food');
+        }
+
+        function openAddGroupModal(category) {
+            currentCategory = category;
+            document.getElementById('addGroupModal').classList.add('active');
+            document.getElementById('newGroupName').value = '';
+            document.getElementById('newGroupWeek').value = '';
+            document.getElementById('newGroupPoints').value = '10';
+            document.getElementById('newGroupName').focus();
+        }
+
+        function closeAddGroupModal() {
+            document.getElementById('addGroupModal').classList.remove('active');
+        }
+
+        function confirmAddGroup() {
+            const name = document.getElementById('newGroupName').value.trim();
+            const week = document.getElementById('newGroupWeek').value;
+            const points = parseInt(document.getElementById('newGroupPoints').value) || 10;
+            
+            if (name) {
+                groupIdCounter++;
+                const group = {
+                    id: groupIdCounter,
+                    name: name,
+                    week: week,
+                    tasks: [
+                        { text: '新任务', completed: false, points: points }
+                    ]
+                };
+                
+                const container = document.getElementById(currentCategory + 'Groups');
+                const groupEl = createGroupElement(group);
+                container.appendChild(groupEl);
+                
+                updateProgress(currentCategory);
+                saveToStorage();
+                closeAddGroupModal();
+            }
+        }
+
+        function openAddWeekModal(groupId, currentWeek) {
+            currentGroupId = groupId;
+            const week = prompt('请输入周数 (1-52):', currentWeek || '');
+            if (week !== null) {
+                const weekNum = parseInt(week);
+                if (weekNum >= 1 && weekNum <= 52) {
+                    const group = document.querySelector(`[data-group-id="${groupId}"]`);
+                    if (group) {
+                        group.dataset.week = weekNum;
+                        const titleEl = group.querySelector('.task-group-title');
+                        const existingBadge = titleEl.querySelector('.week-badge');
+                        if (existingBadge) {
+                            existingBadge.textContent = `第${weekNum}周`;
+                        } else {
+                            const badge = document.createElement('span');
+                            badge.className = 'week-badge';
+                            badge.textContent = `第${weekNum}周`;
+                            titleEl.insertBefore(badge, titleEl.firstChild);
+                        }
+                        saveToStorage();
+                    }
+                } else if (week !== '') {
+                    alert('请输入1-52之间的周数');
+                }
+            }
+        }
+
+        function deleteGroup(groupId) {
+            if (confirm('确定要删除这个子项目吗？')) {
+                const group = document.querySelector(`[data-group-id="${groupId}"]`);
+                if (group) {
+                    const category = group.parentElement.id.replace('Groups', '');
+                    group.remove();
+                    updateProgress(category);
+                    saveToStorage();
+                }
+            }
+        }
+
+        function openAddTaskModal(groupId) {
+            currentGroupId = groupId;
+            document.getElementById('addTaskModal').classList.add('active');
+            document.getElementById('newTaskText').value = '';
+            document.getElementById('newTaskPoints').value = '10';
+            document.getElementById('newTaskText').focus();
+        }
+
+        function closeAddTaskModal() {
+            document.getElementById('addTaskModal').classList.remove('active');
+        }
+
+        function confirmAddTask() {
+            const text = document.getElementById('newTaskText').value.trim();
+            const points = parseInt(document.getElementById('newTaskPoints').value) || 10;
+            
+            if (text) {
+                const group = document.querySelector(`[data-group-id="${currentGroupId}"]`);
+                if (group) {
+                    const taskList = group.querySelector('.task-list');
+                    const taskEl = createTaskElement({ text: text, completed: false, points: points }, currentGroupId);
+                    taskList.appendChild(taskEl);
+                    
+                    const category = group.parentElement.id.replace('Groups', '');
+                    updateProgress(category);
+                    saveToStorage();
+                    closeAddTaskModal();
+                }
+            }
+        }
+
+        function editTaskPoints(btn) {
+            const taskItem = btn.parentElement.parentElement;
+            const currentPoints = taskItem.dataset.points;
+            const newPoints = prompt('请输入新的积分值:', currentPoints);
+            if (newPoints !== null && newPoints !== '') {
+                const points = parseInt(newPoints);
+                if (points > 0) {
+                    taskItem.dataset.points = points;
+                    taskItem.querySelector('.task-points').textContent = '+' + points;
+                    saveToStorage();
+                }
+            }
+        }
+
+        function deleteTask(btn) {
+            const taskItem = btn.parentElement.parentElement;
+            const group = taskItem.parentElement.parentElement;
+            const category = group.parentElement.id.replace('Groups', '');
+            
+            taskItem.remove();
+            updateProgress(category);
+            saveToStorage();
+        }
+
+        function redeemReward(name, points) {
+            if (totalPoints >= points) {
+                if (confirm(`确定要兑换"${name}"吗？需要消耗${points}积分。`)) {
+                    totalPoints -= points;
+                    document.getElementById('totalPoints').textContent = totalPoints;
+                    alert(`恭喜你成功兑换"${name}"！🎉`);
+                    saveToStorage();
+                    updateRedeemButtons();
+                }
+            } else {
+                alert(`积分不足！还需要 ${points - totalPoints} 积分才能兑换 "${name}"`);
+            }
+        }
+
+        function updateRedeemButtons() {
+            const buttons = document.querySelectorAll('.redeem-btn');
+            buttons.forEach(btn => {
+                const pointsText = btn.parentElement.querySelector('.reward-points').textContent;
+                const requiredPoints = parseInt(pointsText.match(/\d+/)[0]);
+                btn.disabled = totalPoints < requiredPoints;
+            });
+        }
+
+        function renderLifeItems(lifeItems) {
+            const container = document.getElementById('lifeListItems');
+            container.innerHTML = '';
+            
+            lifeItems.forEach(item => {
+                if (item.id > lifeItemIdCounter) {
+                    lifeItemIdCounter = item.id;
+                }
+                const itemEl = createLifeItemElement(item);
+                container.appendChild(itemEl);
+            });
+        }
+
+        function createLifeItemElement(item) {
+            const div = document.createElement('div');
+            div.className = 'life-list-item' + (item.completed ? ' completed' : '');
+            div.dataset.itemId = item.id;
+            
+            div.innerHTML = `
+                <div class="checkbox ${item.completed ? 'checked' : ''}" onclick="toggleLifeItem(this)"></div>
+                <div class="life-item-text ${item.completed ? 'completed' : ''}">
+                    <input type="text" value="${item.text}" onchange="saveToStorage()">
+                </div>
+                <div class="life-item-actions">
+                    <button class="life-item-action-btn edit-btn" title="编辑"><span>✏️</span></button>
+                    <button class="life-item-action-btn delete-btn" onclick="deleteLifeItem(this)" title="删除"><span>×</span></button>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function toggleLifeItem(checkbox) {
+            const lifeItem = checkbox.parentElement;
+            const lifeItemText = lifeItem.querySelector('.life-item-text');
+            checkbox.classList.toggle('checked');
+            lifeItem.classList.toggle('completed');
+            lifeItemText.classList.toggle('completed');
+            
+            saveToStorage();
+        }
+
+        function openAddLifeItemModal() {
+            document.getElementById('addLifeItemModal').classList.add('active');
+            document.getElementById('newLifeItemText').value = '';
+            document.getElementById('newLifeItemText').focus();
+        }
+
+        function closeAddLifeItemModal() {
+            document.getElementById('addLifeItemModal').classList.remove('active');
+        }
+
+        function confirmAddLifeItem() {
+            const text = document.getElementById('newLifeItemText').value.trim();
+            
+            if (text) {
+                lifeItemIdCounter++;
+                const lifeItem = {
+                    id: lifeItemIdCounter,
+                    text: text,
+                    completed: false
+                };
+                
+                const container = document.getElementById('lifeListItems');
+                const itemEl = createLifeItemElement(lifeItem);
+                container.appendChild(itemEl);
+                
+                saveToStorage();
+                closeAddLifeItemModal();
+            }
+        }
+
+        function deleteLifeItem(btn) {
+            if (confirm('确定要删除这个人生目标吗？')) {
+                const lifeItem = btn.parentElement.parentElement;
+                lifeItem.remove();
+                saveToStorage();
+            }
+        }
+
+        function openAddRewardModal(category) {
+            currentRewardCategory = category;
+            document.getElementById('addRewardModal').classList.add('active');
+            document.getElementById('newRewardName').value = '';
+            document.getElementById('newRewardPoints').value = '';
+            document.getElementById('newRewardName').focus();
+        }
+
+        function closeAddRewardModal() {
+            document.getElementById('addRewardModal').classList.remove('active');
+        }
+
+        function confirmAddReward() {
+            const name = document.getElementById('newRewardName').value.trim();
+            const points = parseInt(document.getElementById('newRewardPoints').value) || 100;
+            
+            if (name) {
+                const card = document.querySelector(`.card.${currentRewardCategory}-reward`);
+                const rewardList = card.querySelector('.reward-item').parentElement;
+                
+                const icons = { 'food': '🍜', 'travel': '✈️', 'shopping': '🛍️' };
+                
+                const rewardItem = document.createElement('div');
+                rewardItem.className = 'reward-item';
+                rewardItem.innerHTML = `
+                    <div class="reward-info">
+                        <span class="reward-icon">${icons[currentRewardCategory]}</span>
+                        <div>
+                            <div class="reward-name">${name}</div>
+                            <div class="reward-points">需要 ${points} 积分</div>
+                        </div>
+                    </div>
+                    <button class="redeem-btn" onclick="redeemReward('${name}', ${points})")">兑换</button>
+                `;
+                
+                const addBtn = card.querySelector('.add-task-btn');
+                rewardList.insertBefore(rewardItem, addBtn);
+                
+                closeAddRewardModal();
+            }
+        }
+
+        document.getElementById('newGroupName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') confirmAddGroup();
+        });
+
+        document.getElementById('newTaskText').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') confirmAddTask();
+        });
+
+        document.getElementById('newRewardName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') confirmAddReward();
+        });
+
+        document.getElementById('newLifeItemText').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') confirmAddLifeItem();
+        });
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+
+        loadFromStorage();
+        updateAllProgress();
+        updateRedeemButtons();
+        
+        // 注册Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker 注册成功:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Service Worker 注册失败:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
