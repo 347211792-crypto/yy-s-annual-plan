@@ -2,7 +2,7 @@
   "name": "年度计划清单",
   "short_name": "计划清单",
   "description": "个人年度计划清单应用，采用潜水员戴夫风格的马赛克卡通UI设计",
-  "start_url": "./年度计划清单.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#0d1b2a",
   "theme_color": "#1a5f7a",
@@ -39,15 +39,15 @@
       "name": "添加任务",
       "short_name": "添加任务",
       "description": "添加新任务",
-      "url": "./年度计划清单.html?action=add-task",
-      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+      "url": "./?action=add-task",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }
     },
     {
       "name": "查看人生清单",
       "short_name": "人生清单",
       "description": "查看人生目标",
-      "url": "./年度计划清单.html?view=life-list",
-      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+      "url": "./?view=life-list",
+      "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }
     }
   ]
 }
